@@ -1,0 +1,36 @@
+{
+  "name": "simple-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@types/node": "^20.8.2",
+    "@types/react": "^18.2.24",
+    "@types/react-dom": "^18.2.9",
+    "aos": "^3.0.0-beta.6",
+    "contentlayer": "^0.3.2",
+    "date-fns": "^2.30.0",
+    "next": "^14.2.3",
+    "next-contentlayer": "^0.3.4",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "rehype-slug": "^5.1.0",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.6",
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/aos": "^3.0.5",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.23",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.14",
+    "tailwindcss": "^3.3.3"
+  }
+}
