@@ -1,24 +1,31 @@
 export const metadata = {
-  title: 'Home - Simple',
-  description: 'Page description',
-}
+  title: 'Pytvzhen',
+  description: 'Pytvzhen 最快的英文视频转中文方案',
+  keywords: [
+    'Pytvzhen 最快的英文视频转中文方案',
+    'Pytvzhen',
+    '视频转换',
+    '视频翻译',
+    '视频转中文',
+    '视频转英文',
+    '视频转日语',
+    '视频转外语',
+  ],
+};
 
-import Hero from '@/components/hero-home'
-import Features from '@/components/features-home'
-import FeaturesBlocks from '@/components/features-blocks'
-import FeaturesWorld from '@/components/features-world'
-import News from '@/components/news'
-import Cta from '@/components/cta'
+import Hero from '@/components/hero-home';
+import Features from '@/components/features-home';
+import Cta from '@/components/cta';
 
 export default function Home() {
   return (
     <>
       <Hero />
       <Features />
-      <FeaturesBlocks />
-      <FeaturesWorld />
-      <News />
+      {/*<FeaturesBlocks />*/}
+      {/*<FeaturesWorld />*/}
+      {/*<News />*/}
       <Cta />
     </>
-  )
+  );
 }
