@@ -21,6 +21,9 @@ const ChineseAudio: React.FC<Props> = ({ onFinish, videoId }) => {
     (data: IGenerateTTSProp) => generateTTS(data),
     {
       manual: true,
+      onBefore: () => {
+        addLogEvent('开始配音');
+      },
       onSuccess: () => {
         state.translateSrtOk = true;
         message.success('配音成功');

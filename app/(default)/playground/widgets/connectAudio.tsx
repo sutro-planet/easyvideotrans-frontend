@@ -3,6 +3,7 @@ import { Button, Form, Input, message } from 'antd';
 import { useReactive, useRequest } from 'ahooks';
 import { voiceAudioConnect } from '@/app/request/playground';
 import { IGenerateTTSProp } from '@/app/type';
+import { addLogEvent } from '@/app/utils/mitter';
 
 interface Props {
   onFinish: () => void;
@@ -18,12 +19,17 @@ const ConnectAudio: React.FC<Props> = ({ onFinish, videoId }) => {
   const { run: voiceAudioConnectRun, loading: voiceAudioConnectLoading } =
     useRequest(() => voiceAudioConnect(videoId), {
       manual: true,
+      onBefore: () => {
+        addLogEvent('语音连接开始');
+      },
       onSuccess: () => {
         state.connectAudioOk = true;
-        message.success('配音成功');
+        message.success('语音连接成功');
+        addLogEvent('语音连接成功');
       },
       onError: () => {
-        message.error('配音失败，请检查参数');
+        message.error('语音连接失败，请检查参数');
+        addLogEvent('语音连接失败，请检查参数');
       },
     });
 
@@ -49,13 +55,13 @@ const ConnectAudio: React.FC<Props> = ({ onFinish, videoId }) => {
         <Input disabled value={videoId} />
       </Form.Item>
 
-      <Form.Item label={'生成TTS'}>
+      <Form.Item label={'语音连接'}>
         <Button
           type="primary"
           onClick={voiceAudioConnectRun}
           loading={voiceAudioConnectLoading}
         >
-          生成
+          语音连接
         </Button>
         {state.connectAudioOk && (
           <>

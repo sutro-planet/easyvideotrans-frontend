@@ -96,7 +96,7 @@ const PageContent = () => {
         {state.logList?.length > 0 ? (
           <ul>
             {state.logList.map((item) => (
-              <li key={item.time} className={'text-xs'}>
+              <li key={item.key} className={'text-xs'}>
                 [{item.time}]{item.text}
               </li>
             ))}

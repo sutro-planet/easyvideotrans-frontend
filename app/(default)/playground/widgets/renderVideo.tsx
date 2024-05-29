@@ -3,6 +3,7 @@ import { Button, Form, Input, message } from 'antd';
 import { useReactive, useRequest } from 'ahooks';
 import { videoPreview } from '@/app/request/playground';
 import { IGenerateTTSProp } from '@/app/type';
+import { addLogEvent } from '@/app/utils/mitter';
 
 interface Props {
   videoId: string;
@@ -19,12 +20,17 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
     () => videoPreview(videoId),
     {
       manual: true,
+      onBefore: () => {
+        addLogEvent('开始渲染');
+      },
       onSuccess: () => {
         state.connectAudioOk = true;
         message.success('渲染成功');
+        addLogEvent('渲染成功');
       },
       onError: () => {
         message.error('渲染失败，请检查参数');
+        addLogEvent('渲染失败，请检查参数');
       },
     },
   );

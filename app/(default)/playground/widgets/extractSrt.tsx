@@ -28,6 +28,9 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
   const { run: extractSourceSrtRun, loading: extractSourceSrtLoading } =
     useRequest(() => extractSourceSrt(videoId), {
       manual: true,
+      onBefore: () => {
+        addLogEvent('开始提取原始源字幕');
+      },
       onSuccess: () => {
         state.extractSourceSrtOk = true;
         message.success('提取原始源字幕成功');
@@ -41,6 +44,9 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
   const { runAsync: translateSrtRun, loading: translateSrtLoading } =
     useRequest((data: ITranslateSrtIProp) => translateSrt(data), {
       manual: true,
+      onBefore: () => {
+        addLogEvent('开始翻译字幕');
+      },
       onSuccess: () => {
         state.translateSrtOk = true;
         message.success('翻译字幕成功');
@@ -177,6 +183,7 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
           type="primary"
           onClick={handleTranslate}
           loading={translateSrtLoading}
+          disabled={!state.extractSourceSrtOk}
         >
           翻译
         </Button>
