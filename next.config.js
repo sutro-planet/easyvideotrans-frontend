@@ -63,7 +63,15 @@ const nextConfig = {
       // },
     ];
   },
-  logging: true,
+  output: 'standalone',
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+  },
+  experimental: {
+    scrollRestoration: false,
+  },
 };
 
 module.exports = withContentlayer(nextConfig);
