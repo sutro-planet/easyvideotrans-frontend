@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import { Button, Form, Input, message, Switch, Upload, UploadFile } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { REQUEST_ENUM } from '@/app/const/request';
@@ -68,8 +68,8 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
       return message.error('请检查输入数据');
     }
 
-    onFinish(result);
     addLogEvent('视频设置成功');
+    onFinish(result);
     message.success('视频设置成功');
   };
   useEffect(() => {
@@ -91,10 +91,21 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
     }
   }
 
+  const extractVideoId = (url: string) => {
+    const regex = /(?:v=|\/)([0-9A-Za-z_-]{11}).*/;
+    const match = url.match(regex);
+    return match?.[1] || '';
+  };
+
   function handleDownloadVideoClick() {
     const value = form.getFieldsValue();
     const result = value.videoId;
     handleDownloadVideoClickRun(result);
+  }
+
+  function getVideoIdFromEvent(event: ChangeEvent<HTMLInputElement>) {
+    const value = event.target.value;
+    return extractVideoId(event.target.value) || value;
   }
 
   return (
@@ -131,10 +142,11 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
               <Form.Item
                 label="视频ID"
                 name={'videoId'}
+                getValueFromEvent={getVideoIdFromEvent}
                 rules={[
                   {
                     required: !videoId && useInputId,
-                    message: '请输入视频ID或者视频网址',
+                    message: '请输入正确的视频ID或者视频网址',
                   },
                 ]}
               >

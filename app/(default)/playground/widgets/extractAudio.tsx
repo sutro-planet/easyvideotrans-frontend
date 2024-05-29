@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import { useReactive, useRequest } from 'ahooks';
 import { handleExtractAudio, removeAudioBg } from '@/app/request/playground';
 import Link from 'next/link';
@@ -22,12 +22,17 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
     () => handleExtractAudio(videoId),
     {
       manual: true,
+      onBefore: () => {
+        addLogEvent('开始提取音频');
+      },
       onSuccess: () => {
         addLogEvent('提取音频成功');
+        message.success('提取音频成功');
         state.extractAudioOk = true;
       },
       onError: () => {
         addLogEvent('提取音频失败');
+        message.error('提取音频失败');
       },
     },
   );
@@ -35,12 +40,17 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
     () => removeAudioBg(videoId),
     {
       manual: true,
+      onBefore: () => {
+        addLogEvent('开始背景音频分离');
+      },
       onSuccess: () => {
         addLogEvent('背景音频分离成功');
+        message.info('背景音频分离成功');
         state.removeAudioBg = true;
       },
       onError: () => {
         addLogEvent('背景音频分离失败');
+        message.error('背景音频分离失败');
       },
     },
   );

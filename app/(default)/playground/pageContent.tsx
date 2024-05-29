@@ -35,7 +35,7 @@ const PageContent = () => {
   };
   const onNextStep = () => {
     state.step++;
-    addLogEvent(`进入下一个${state.step + 1}阶段`);
+    addLogEvent(`进入第【${state.step + 1}】个阶段`);
   };
 
   const items: TabsProps['items'] = [
@@ -89,7 +89,7 @@ const PageContent = () => {
         onChange={onTabChange}
         rootClassName={'flex-1'}
       />
-      <div className={' w-full rounded-md border p-2 lg:ml-3 lg:w-[300px]'}>
+      <div className={' w-full  rounded-md border p-2 lg:ml-3 lg:w-[300px]'}>
         <div className={'flex h-9 flex-col justify-center border-b font-black'}>
           日志
         </div>
