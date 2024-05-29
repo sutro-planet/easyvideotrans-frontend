@@ -5,4 +5,7 @@ export enum REQUEST_ENUM {
   removeAudioBg = '/api/remove_audio_bg',
   extractSourceSrt = '/api/transcribe',
   translateSrt = '/api/translate_to_zh',
+  generateTTS = '/api/tts',
+  voiceConnect = '/api/voice_connect',
+  videoPreview = '/api/video_preview',
 }

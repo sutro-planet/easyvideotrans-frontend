@@ -1,22 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Form, Input } from 'antd';
 import { useReactive, useRequest } from 'ahooks';
 import { handleExtractAudio, removeAudioBg } from '@/app/request/playground';
 import Link from 'next/link';
+import { addLogEvent } from '@/app/utils/mitter';
 
 interface Props {
   onFinish: () => void;
   videoId: string;
 }
 
+interface FormValue {
+  videoId: string;
+}
+
 const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
+  const [form] = Form.useForm<FormValue>();
+
   const state = useReactive({ extractAudioOk: false, removeAudioBg: false });
   const { run: extractAudioRun, loading: extractAudioLoading } = useRequest(
     () => handleExtractAudio(videoId),
     {
       manual: true,
       onSuccess: () => {
+        addLogEvent('提取音频成功');
         state.extractAudioOk = true;
+      },
+      onError: () => {
+        addLogEvent('提取音频失败');
       },
     },
   );
@@ -25,13 +36,21 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
     {
       manual: true,
       onSuccess: () => {
+        addLogEvent('背景音频分离成功');
         state.removeAudioBg = true;
+      },
+      onError: () => {
+        addLogEvent('背景音频分离失败');
       },
     },
   );
+  useEffect(() => {
+    form.setFieldValue('videoId', videoId);
+  }, [videoId]);
 
   return (
     <Form
+      form={form}
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 14 }}
       layout="horizontal"
@@ -50,9 +69,16 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
           提取音频
         </Button>
         {state.extractAudioOk && (
-          <Link target={'_blank'} href={`/audio/${videoId}`} type="primary">
+          <Button
+            target={'_blank'}
+            href={`/audio/${videoId}`}
+            type="link"
+            onClick={() => {
+              addLogEvent('下载音频');
+            }}
+          >
             下载音频
-          </Link>
+          </Button>
         )}
       </Form.Item>
       <Form.Item label={'取出音频背景音乐'}>
@@ -64,16 +90,26 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
           取出音频背景音乐
         </Button>
         {state.removeAudioBg && (
-          <Link
+          <Button
             target={'_blank'}
             href={`/audio_no_bg/${videoId}`}
-            type="primary"
+            type="link"
+            onClick={() => {
+              addLogEvent('下载声音');
+            }}
           >
             下载声音
-          </Link>
+          </Button>
         )}
         {state.removeAudioBg && (
-          <Link target={'_blank'} href={`/audio_bg/${videoId}`} type="primary">
+          <Link
+            target={'_blank'}
+            href={`/audio_bg/${videoId}`}
+            type="primary"
+            onClick={() => {
+              addLogEvent('下载背景音');
+            }}
+          >
             下载背景音
           </Link>
         )}
@@ -83,7 +119,7 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
         <Button
           type="primary"
           htmlType="submit"
-          disabled={state.extractAudioOk && state.removeAudioBg}
+          disabled={!state.extractAudioOk || !state.removeAudioBg}
         >
           GO
         </Button>

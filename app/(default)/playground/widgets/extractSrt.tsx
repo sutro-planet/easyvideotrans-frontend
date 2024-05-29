@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Form, Input, message, Select } from 'antd';
 import { useReactive, useRequest } from 'ahooks';
 import { extractSourceSrt, translateSrt } from '@/app/request/playground';
-import Link from 'next/link';
 import { ITranslateSrtIProp } from '@/app/type';
+import { addLogEvent } from '@/app/utils/mitter';
 
 interface Props {
   onFinish: () => void;
@@ -30,6 +30,12 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
       manual: true,
       onSuccess: () => {
         state.extractSourceSrtOk = true;
+        message.success('提取原始源字幕成功');
+        addLogEvent('提取原始源字幕成功');
+      },
+      onError: () => {
+        message.error('提取原始源字幕失败');
+        addLogEvent('提取原始源字幕失败');
       },
     });
   const { runAsync: translateSrtRun, loading: translateSrtLoading } =
@@ -37,10 +43,12 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
       manual: true,
       onSuccess: () => {
         state.translateSrtOk = true;
-        message.success('翻译成功');
+        message.success('翻译字幕成功');
+        addLogEvent('翻译字幕成功');
       },
       onError: () => {
-        message.error('翻译失败，请检查参数');
+        message.error('翻译字幕失败，请检查参数');
+        addLogEvent('翻译字幕失败，请检查参数');
       },
     });
 
@@ -53,10 +61,12 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
       translate_vendor,
       translate_key: isShowTranslateKey ? translate_key : '',
     };
-    translateSrtRun(data).then(() => {
-      onFinish();
-    });
+    translateSrtRun(data);
   };
+
+  useEffect(() => {
+    form.setFieldValue('videoId', videoId);
+  }, [videoId]);
 
   return (
     <Form
@@ -84,19 +94,22 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
           提取原始源字幕
         </Button>
         {state.extractSourceSrtOk && (
-          <Link
+          <Button
             target={'_blank'}
             href={`/srt_en_merged/${videoId}`}
-            type="primary"
+            type="link"
+            onClick={() => {
+              addLogEvent('下载原始源字幕');
+            }}
           >
             下载原始源字幕
-          </Link>
+          </Button>
         )}
       </Form.Item>
       <Form.Item label={'语言选项'}>
         <Form.Item
           name="source_lang"
-          style={{ display: 'inline-block', width: '200px' }}
+          style={{ display: 'inline-block', width: '100px' }}
         >
           <Select
             placeholder="选择源语言"
@@ -107,10 +120,16 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
           />
         </Form.Item>
         <Form.Item
+          name="source_lang"
+          style={{ display: 'inline-block', width: '40px' }}
+        >
+          <div className={'text-center'}>到</div>
+        </Form.Item>
+        <Form.Item
           name="lang_to"
           style={{
             display: 'inline-block',
-            width: '200px',
+            width: '100px',
             marginLeft: '8px',
           }}
         >
@@ -123,6 +142,7 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
           />
         </Form.Item>
       </Form.Item>
+
       <Form.Item label={'翻译引擎'}>
         <Form.Item
           name="translate_vendor"
@@ -155,12 +175,20 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
       <Form.Item label={'开始翻译'}>
         <Button
           type="primary"
-          htmlType="submit"
           onClick={handleTranslate}
           loading={translateSrtLoading}
         >
           翻译
         </Button>
+        {state.translateSrtOk && (
+          <Button
+            type="link"
+            target={'_blank'}
+            href={`/srt_zh_merged/${videoId}`}
+          >
+            下载翻译后的字幕
+          </Button>
+        )}
       </Form.Item>
       <Form.Item label={'进入下一步'}>
         <Button
