@@ -6,7 +6,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://pytvzhen-beta.sutroplanet.com/:path*', // The :path parameter is used here so will not be automatically passed in the query
+        destination: `${process.env.BACKEND_URL}/:path*`, // The :path parameter is used here so will not be automatically passed in the query
       },
     ];
   },
