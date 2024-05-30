@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 
 import Header from '@/components/ui/header';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -33,6 +34,7 @@ export default function RootLayout({
           </div>
         </AntdRegistry>
       </body>
+      <GoogleAnalytics gaId="G-WXY965PMRE" />
     </html>
   );
 }
