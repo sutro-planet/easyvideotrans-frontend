@@ -81,7 +81,7 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
         {state.extractAudioOk && (
           <Button
             target={'_blank'}
-            href={`/audio/${videoId}`}
+            href={`/api/audio/${videoId}`}
             type="link"
             onClick={() => {
               addLogEvent('下载音频');
@@ -96,13 +96,14 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
           type="primary"
           onClick={removeAudioBgRun}
           loading={removeAudioBgLoading}
+          disabled={!state.extractAudioOk}
         >
           取出音频背景音乐
         </Button>
         {state.removeAudioBg && (
           <Button
             target={'_blank'}
-            href={`/audio_no_bg/${videoId}`}
+            href={`/api/audio_no_bg/${videoId}`}
             type="link"
             onClick={() => {
               addLogEvent('下载声音');
@@ -114,7 +115,7 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
         {state.removeAudioBg && (
           <Link
             target={'_blank'}
-            href={`/audio_bg/${videoId}`}
+            href={`/api/audio_bg/${videoId}`}
             type="primary"
             onClick={() => {
               addLogEvent('下载背景音');

@@ -102,7 +102,7 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
         {state.extractSourceSrtOk && (
           <Button
             target={'_blank'}
-            href={`/srt_en_merged/${videoId}`}
+            href={`/api/srt_en_merged/${videoId}`}
             type="link"
             onClick={() => {
               addLogEvent('下载原始源字幕');
@@ -191,7 +191,7 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
           <Button
             type="link"
             target={'_blank'}
-            href={`/srt_zh_merged/${videoId}`}
+            href={`/api/srt_zh_merged/${videoId}`}
           >
             下载翻译后的字幕
           </Button>

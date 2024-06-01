@@ -68,14 +68,14 @@ const ConnectAudio: React.FC<Props> = ({ onFinish, videoId }) => {
             <Button
               type="link"
               target={'_blank'}
-              href={`/voice_connect/${videoId}`}
+              href={`/api/voice_connect/${videoId}`}
             >
               下载音频
             </Button>
             <Button
               type="link"
               target={'_blank'}
-              href={`/voice_connect_log/${videoId}`}
+              href={`/api/voice_connect_log/${videoId}`}
             >
               下载日志
             </Button>

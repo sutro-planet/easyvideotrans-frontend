@@ -104,7 +104,7 @@ const ChineseAudio: React.FC<Props> = ({ onFinish, videoId }) => {
           生成
         </Button>
         {state.translateSrtOk && (
-          <Button type="link" target={'_blank'} href={`/tts/${videoId}`}>
+          <Button type="link" target={'_blank'} href={`/api/tts/${videoId}`}>
             下载TTS
           </Button>
         )}
