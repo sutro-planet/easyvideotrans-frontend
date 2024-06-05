@@ -13,7 +13,7 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
   const [form] = Form.useForm<IGenerateTTSProp>();
 
   const state = useReactive({
-    connectAudioOk: false,
+    renderVideoOk: false,
   });
 
   const { run: videoPreviewRun, loading: videoPreviewLoading } = useRequest(
@@ -24,7 +24,7 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
         addLogEvent('开始渲染');
       },
       onSuccess: () => {
-        state.connectAudioOk = true;
+        state.renderVideoOk = true;
         message.success('渲染成功');
         addLogEvent('渲染成功');
       },
@@ -64,21 +64,14 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
         >
           生成
         </Button>
-        {state.connectAudioOk && (
+        {state.renderVideoOk && (
           <>
             <Button
               type="link"
               target={'_blank'}
-              href={`/api/voice_connect/${videoId}`}
+              href={`/api/video_preview/${videoId}`}
             >
-              下载音频
-            </Button>
-            <Button
-              type="link"
-              target={'_blank'}
-              href={`/api/voice_connect_log/${videoId}`}
-            >
-              下载日志
+              下载视频
             </Button>
           </>
         )}
