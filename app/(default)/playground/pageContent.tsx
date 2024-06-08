@@ -13,7 +13,14 @@ import {
 import React, { useEffect } from 'react';
 import ChineseAudio from '@/app/(default)/playground/widgets/chineseAudio';
 import ConnectAudio from '@/app/(default)/playground/widgets/connectAudio';
-import RenderVideo from '@/app/(default)/playground/widgets/renderVideo';
+import dynamic from 'next/dynamic';
+
+const RenderVideo = dynamic(
+  () => import('@/app/(default)/playground/widgets/renderVideo'),
+  {
+    ssr: false,
+  },
+);
 
 const PageContent = () => {
   const state = useReactive<{
