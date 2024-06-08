@@ -1,5 +1,14 @@
 import React, { ChangeEvent, useEffect } from 'react';
-import { Button, Form, Input, message, Switch, Upload, UploadFile } from 'antd';
+import {
+  Button,
+  Flex,
+  Form,
+  Input,
+  message,
+  Switch,
+  Upload,
+  UploadFile,
+} from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { REQUEST_ENUM } from '@/app/const/request';
 import { handleDownloadVideo } from '@/app/request/playground';
@@ -42,6 +51,7 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
     },
   );
   const useInputId = Form.useWatch('useInput', form);
+  const formInputId = Form.useWatch('videoId', form) || videoId;
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
       return e;
@@ -153,13 +163,22 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
                 <Input disabled={!!videoId} />
               </Form.Item>
               <Form.Item label={'开始下载视频'}>
-                <Button
-                  type="primary"
-                  onClick={handleDownloadVideoClick}
-                  loading={loading}
-                >
-                  下载
-                </Button>
+                <Flex gap="small" wrap>
+                  <Button
+                    type="primary"
+                    onClick={handleDownloadVideoClick}
+                    loading={loading}
+                  >
+                    下载
+                  </Button>
+                  {state.videoDownloadOk && (
+                    <>
+                      <Button type="link" href={`/api/yt/${formInputId}`}>
+                        点此下载到本地
+                      </Button>
+                    </>
+                  )}
+                </Flex>
               </Form.Item>
             </>
           ) : (

@@ -4,6 +4,7 @@ import { useReactive, useRequest } from 'ahooks';
 import { generateTTS } from '@/app/request/playground';
 import { IGenerateTTSProp } from '@/app/type';
 import { addLogEvent } from '@/app/utils/mitter';
+import { TRANSLATE_OPTIONS } from '@/app/const/translate_option';
 
 interface Props {
   onFinish: () => void;
@@ -84,12 +85,7 @@ const ChineseAudio: React.FC<Props> = ({ onFinish, videoId }) => {
           name="tts_character"
           style={{ display: 'inline-block', width: '200px' }}
         >
-          <Select
-            placeholder="选择TTS Character"
-            options={[
-              { value: 'zh-CN-XiaoyiNeural', label: 'zh-CN-XiaoyiNeural' },
-            ]}
-          />
+          <Select placeholder="选择TTS Character" options={TRANSLATE_OPTIONS} />
         </Form.Item>
       </Form.Item>
       <Form.Item label="key" name={'tts_key'}>

@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
-import { Button, Form, Input, message } from 'antd';
+import React, { useEffect, useRef } from 'react';
+import { Alert, Button, Form, Input, message, Space } from 'antd';
 import { useReactive, useRequest } from 'ahooks';
 import { videoPreview } from '@/app/request/playground';
 import { IGenerateTTSProp } from '@/app/type';
 import { addLogEvent } from '@/app/utils/mitter';
+import { DPlayer, Player as RcDPlayer } from 'rc-dplayer';
+import './render_video.css';
 
 interface Props {
   videoId: string;
@@ -11,9 +13,13 @@ interface Props {
 
 const RenderVideo: React.FC<Props> = ({ videoId }) => {
   const [form] = Form.useForm<IGenerateTTSProp>();
-
+  const videoRef = useRef<DPlayer | null>(null);
+  const videoClick = useRef(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const state = useReactive({
     renderVideoOk: false,
+    audioOk: false,
+    videoOk: false,
   });
 
   const { run: videoPreviewRun, loading: videoPreviewLoading } = useRequest(
@@ -47,13 +53,76 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
       layout="horizontal"
       initialValues={{
         videoId,
-        tts_vendor: 'edge',
-        tts_key: '',
-        tts_character: 'zh-CN-XiaoyiNeural',
       }}
     >
       <Form.Item label="视频ID" name={'videoId'}>
         <Input disabled value={videoId} />
+      </Form.Item>
+      <Form.Item label="视频预览" name={'video_player'}>
+        {videoId && (
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <Alert
+              message="预览音画可能不同步，最终渲染结果无影响"
+              type="warning"
+            />
+            <div
+              onClickCapture={() => {
+                videoClick.current = true;
+                audioRef.current!.pause();
+              }}
+            >
+              <RcDPlayer
+                src={`/api/yt/${videoId}`}
+                options={{
+                  volume: 0,
+                }}
+                onLoad={(dp) => {
+                  videoRef.current = dp;
+                }}
+                onPlay={() => {
+                  audioRef.current!.play();
+                }}
+                onPause={() => {
+                  audioRef.current!.pause();
+                }}
+                onCanPlay={(event) => {
+                  state.videoOk = true;
+                  addLogEvent('视频可被播放');
+                }}
+                onTimeUpdate={(event) => {
+                  const time = (event.target as any).currentTime as number;
+                  if (videoClick.current) {
+                    audioRef.current!.currentTime = time;
+                    if (audioRef.current!.paused) {
+                      audioRef.current!.play();
+                    }
+                  }
+                  videoClick.current = false;
+                }}
+              />
+            </div>
+            <div className={'hidden'}>
+              <audio
+                controls
+                src={`/api/voice_connect/${videoId}`}
+                ref={audioRef}
+                onCanPlay={() => {
+                  state.audioOk = true;
+                }}
+                onError={(event) => {
+                  message.error('音频加载出错');
+                  addLogEvent('音频加载出错');
+                }}
+                // onPause={() => {
+                //   videoRef.current!.pause();
+                // }}
+                // onPlay={() => {
+                //   videoRef.current!.play();
+                // }}
+              />
+            </div>
+          </Space>
+        )}
       </Form.Item>
 
       <Form.Item label={'生成视频'}>
