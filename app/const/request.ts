@@ -8,4 +8,5 @@ export enum REQUEST_ENUM {
   generateTTS = '/api/tts',
   voiceConnect = '/api/voice_connect',
   videoPreview = '/api/video_preview',
+  videoPreviewStatus = '/api/video_preview_status',
 }
