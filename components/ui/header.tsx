@@ -56,7 +56,7 @@ export default function Header() {
               <li>
                 <Link
                   target={'_blank'}
-                  href="https://github.com/CuSO4Gem/pytvzhen"
+                  href="https://github.com/sutro-planet/easyvideotrans-service"
                   className="flex items-center px-3 py-2 text-gray-600 transition duration-150 ease-in-out hover:text-gray-900 lg:px-5"
                 >
                   Github

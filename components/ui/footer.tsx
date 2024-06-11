@@ -21,7 +21,7 @@ export default function Footer() {
             </li>
             <li className="ml-4">
               <Link
-                href="https://github.com/CuSO4Gem/pytvzhen"
+                href="https://github.com/sutro-planet/easyvideotrans-service"
                 className="hover:bg-white-100 flex items-center justify-center rounded-full bg-white text-gray-600 shadow transition duration-150 ease-in-out hover:text-gray-900"
                 aria-label="Github"
               >

@@ -5,7 +5,7 @@ export default function Logo() {
   return (
     <Link href="/" className="block" aria-label="Cruip">
       <Image
-        src={'/img/logo.jpg'}
+        src={'/img/logo.png'}
         width={400}
         height={400}
         alt={'Pytvzhen Logo'}
