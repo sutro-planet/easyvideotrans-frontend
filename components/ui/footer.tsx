@@ -32,7 +32,7 @@ export default function Footer() {
 
           {/* Copyrights note */}
           <div className="mr-4 text-sm text-gray-600">
-            &copy; Pytvzhen. All rights reserved.
+            &copy; EasyVideoTrans. All rights reserved.
           </div>
         </div>
       </div>

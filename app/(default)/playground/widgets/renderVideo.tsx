@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { Alert, Button, Form, Input, message, Space } from 'antd';
+import { Alert, Button, Form, Input, message, Modal, Space } from 'antd';
 import { useReactive, useRequest } from 'ahooks';
 import { videoPreview, videoPreviewStatus } from '@/app/request/playground';
 import { IGenerateTTSProp } from '@/app/type';
 import { addLogEvent } from '@/app/utils/mitter';
 import { DPlayer, Player as RcDPlayer } from 'rc-dplayer';
 import './render_video.css';
+import { CheckCircleTwoTone } from '@ant-design/icons';
 
 interface Props {
   videoId: string;
@@ -23,6 +24,55 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
     videoOk: false,
   });
 
+  const { run: checkStatusRun, cancel } = useRequest(
+    () => videoPreviewStatus(state.renderVideoTask),
+    {
+      manual: true,
+      pollingInterval: 10000,
+      onSuccess: (response) => {
+        switch (response.data.state) {
+          case 'SUCCESS':
+            message.success(
+              `渲染请求成功！请求哈希为 ${state.renderVideoTask}`,
+            );
+            addLogEvent(`渲染请求成功！请求哈希为 ${state.renderVideoTask}`);
+
+            state.renderVideoOk = true;
+            state.renderVideoTask = '';
+            cancel();
+            Modal.success({
+              className: 'render_success',
+              title: '渲染成功',
+              icon: <CheckCircleTwoTone twoToneColor="#52c41a" />,
+              content: '现在您可以下载或者预览渲染结果了',
+              okText: '确认',
+              cancelText: null,
+            });
+            break;
+          case 'FAILURE':
+            message.success(
+              `渲染请求失败！请求哈希为 ${state.renderVideoTask}`,
+            );
+            addLogEvent(`渲染请求失败！请求哈希为 ${state.renderVideoTask}`);
+
+            state.renderVideoOk = false;
+            state.renderVideoTask = '';
+            break;
+          case 'PENDING':
+            message.info(
+              `渲染请求仍在队列！请求哈希为 ${state.renderVideoTask}，10秒后重试`,
+            );
+            addLogEvent(
+              `渲染请求仍在队列！请求哈希为 ${state.renderVideoTask}，10秒后重试`,
+            );
+        }
+      },
+      onError: () => {
+        message.error('状态检查失败，请重试');
+        addLogEvent('状态检查失败，请重试');
+      },
+    },
+  );
   const { run: videoPreviewRun, loading: videoPreviewLoading } = useRequest(
     () => videoPreview(videoId),
     {
@@ -36,6 +86,9 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
         addLogEvent(info);
 
         state.renderVideoTask = result.data.video_preview_task_id;
+        if (result.data.video_preview_task_id) {
+          checkStatusRun();
+        }
       },
       onError: () => {
         const info = '提交渲染请求失败，请检查参数';
@@ -45,58 +98,9 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
     },
   );
 
-  const { run: checkStatusRun } = useRequest(
-    () => videoPreviewStatus(state.renderVideoTask),
-    {
-      manual: true,
-      onSuccess: (response) => {
-        switch (response.data.state) {
-          case 'SUCCESS':
-            message.success(
-              `渲染请求成功！请求哈希为 ${state.renderVideoTask}`,
-            );
-            addLogEvent(`渲染请求成功！请求哈希为 ${state.renderVideoTask}`);
-
-            state.renderVideoOk = true;
-            state.renderVideoTask = '';
-            break;
-          case 'FAILURE':
-            message.success(
-              `渲染请求失败！请求哈希为 ${state.renderVideoTask}`,
-            );
-            addLogEvent(`渲染请求失败！请求哈希为 ${state.renderVideoTask}`);
-
-            state.renderVideoOk = false;
-            state.renderVideoTask = '';
-            break;
-          case 'PENDING':
-            message.info(
-              `渲染请求仍在队列！请求哈希为 ${state.renderVideoTask}，5秒后重试`,
-            );
-            addLogEvent(
-              `渲染请求仍在队列！请求哈希为 ${state.renderVideoTask}，5秒后重试`,
-            );
-        }
-      },
-      onError: () => {
-        message.error('状态检查失败，请重试');
-        addLogEvent('状态检查失败，请重试');
-      },
-    },
-  );
-
   useEffect(() => {
     form.setFieldValue('videoId', videoId);
-
-    // poll the video rendering status every 5 seconds
-    let interval: NodeJS.Timeout;
-    if (state.renderVideoTask !== '') {
-      interval = setInterval(() => {
-        checkStatusRun();
-      }, 5000);
-    }
-    return () => clearInterval(interval);
-  }, [videoId, state.renderVideoTask, checkStatusRun]);
+  }, [videoId]);
 
   return (
     <Form
@@ -111,7 +115,7 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
       <Form.Item label="视频ID" name={'videoId'}>
         <Input disabled value={videoId} />
       </Form.Item>
-      <Form.Item label="视频预览" name={'video_player'}>
+      <Form.Item label="前端视频预览" name={'video_player'}>
         {videoId && (
           <Space direction="vertical" style={{ width: '100%' }}>
             <Alert
@@ -119,6 +123,7 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
               type="warning"
             />
             <div
+              className={'player_fe'}
               onClickCapture={() => {
                 videoClick.current = true;
                 audioRef.current!.pause();
@@ -171,6 +176,16 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
           </Space>
         )}
       </Form.Item>
+      {state.renderVideoOk && (
+        <Form.Item label="渲染视频预览" name={'render_video_player'}>
+          <div>
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <Alert message="服务端渲染视频结果展示" type="success" />
+              <video controls src={`/api/video_preview/${videoId}`} />
+            </Space>
+          </div>
+        </Form.Item>
+      )}
 
       <Form.Item label={'生成视频'}>
         <Button

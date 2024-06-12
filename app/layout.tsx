@@ -13,11 +13,11 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: 'Pytvzhen',
-  description: 'Pytvzhen 最快的英文视频转中文方案',
+  title: 'EasyVideoTrans',
+  description: 'EasyVideoTrans 最快的英文视频转中文方案',
   keywords: [
-    'Pytvzhen 最快的英文视频转中文方案',
-    'Pytvzhen',
+    'EasyVideoTrans 最快的英文视频转中文方案',
+    'EasyVideoTrans',
     '视频转换',
     '视频翻译',
     '视频转中文',
