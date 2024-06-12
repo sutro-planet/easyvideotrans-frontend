@@ -47,7 +47,7 @@ export default function HeroHome() {
             >
               最快的英文视频转中文方案
               <span className="bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent">
-                EeasyVideoTrans
+                EasyVideoTrans
               </span>
             </h1>
             <div className="mx-auto max-w-3xl">
