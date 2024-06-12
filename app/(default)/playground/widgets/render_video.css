@@ -1,3 +1,7 @@
-.dplayer-volume {
+.player_fe .dplayer-volume {
     display: none !important;
+}
+
+.render_success .ant-modal-confirm-btns .ant-btn-default {
+    display: none;
 }

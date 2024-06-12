@@ -22,6 +22,6 @@ export const addLogEvent = (text: string) => {
   emitter.emit(MITTER_EVENT_ENUM.addLog, {
     time: dayjs().format('HH:MM:ss'),
     text,
-    key: dayjs().unix().toString(),
+    key: String(Math.random()),
   } as LogData);
 };

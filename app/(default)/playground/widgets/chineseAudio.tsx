@@ -81,10 +81,7 @@ const ChineseAudio: React.FC<Props> = ({ onFinish, videoId }) => {
         </Form.Item>
       </Form.Item>
       <Form.Item label={'TTS Character'}>
-        <Form.Item
-          name="tts_character"
-          style={{ display: 'inline-block', width: '200px' }}
-        >
+        <Form.Item name="tts_character">
           <Select placeholder="选择TTS Character" options={TRANSLATE_OPTIONS} />
         </Form.Item>
       </Form.Item>

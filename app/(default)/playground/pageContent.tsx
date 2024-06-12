@@ -96,7 +96,11 @@ const PageContent = () => {
         onChange={onTabChange}
         rootClassName={'flex-1'}
       />
-      <div className={' w-full  rounded-md border p-2 lg:ml-3 lg:w-[300px]'}>
+      <div
+        className={
+          ' max-h-[700px]  w-full overflow-auto rounded-md border p-2 lg:ml-3 lg:w-[300px]'
+        }
+      >
         <div className={'flex h-9 flex-col justify-center border-b font-black'}>
           日志
         </div>
