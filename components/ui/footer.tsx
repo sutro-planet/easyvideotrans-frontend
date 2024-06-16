@@ -1,6 +1,7 @@
 import { FaGithub } from 'react-icons/fa';
 import { FaBilibili } from 'react-icons/fa6';
 import Link from 'next/link';
+import { MdEmail } from 'react-icons/md';
 
 export default function Footer() {
   return (
@@ -26,6 +27,15 @@ export default function Footer() {
                 aria-label="Github"
               >
                 <FaGithub />
+              </Link>
+            </li>
+            <li className="ml-4">
+              <Link
+                href="mailto:zornlink@163.com"
+                className="hover:bg-white-100 flex items-center justify-center rounded-full bg-white text-gray-600 shadow transition duration-150 ease-in-out hover:text-gray-900"
+                aria-label="Github"
+              >
+                <MdEmail />
               </Link>
             </li>
           </ul>

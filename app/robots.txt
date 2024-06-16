@@ -2,4 +2,4 @@ User-agent: Googlebot
 
 Allow: /
 
-Sitemap: https://pytvzhen.busylinux.com/sitemap.xml
+Sitemap: https://easyvideotrans.com/sitemap.xml

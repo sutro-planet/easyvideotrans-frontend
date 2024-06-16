@@ -62,6 +62,15 @@ export default function Header() {
                   Github
                 </Link>
               </li>
+              <li>
+                <Link
+                  target={'_blank'}
+                  href="mailto:zornlink@163.com"
+                  className="flex items-center px-3 py-2 text-gray-600 transition duration-150 ease-in-out hover:text-gray-900 lg:px-5"
+                >
+                  Contact
+                </Link>
+              </li>
             </ul>
           </nav>
 
