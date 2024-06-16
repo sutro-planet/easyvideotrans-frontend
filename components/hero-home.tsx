@@ -46,7 +46,7 @@ export default function HeroHome() {
               data-aos="zoom-y-out"
             >
               最快的英文视频转中文方案
-              <span className="bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent max-md:text-4xl">
                 EasyVideoTrans
               </span>
             </h1>
