@@ -17,6 +17,7 @@ import { RcFile, UploadChangeParam } from 'antd/es/upload';
 import { useReactive, useRequest } from 'ahooks';
 import { ResponseMessageEnum } from '@/app/const/responseEnum';
 import { getVideoLengthByUploadFile } from '@/app/utils/getVideoLength';
+import { AxiosError } from 'axios';
 
 interface FormValue {
   useInput: boolean;
@@ -51,7 +52,9 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
         state.videoDownloadOk = true;
       },
       onError: (originResponseError) => {
-        const message = (originResponseError as any).response.data.message;
+        const message =
+          (originResponseError as AxiosError<{ message: string }>).response
+            ?.data?.message || '';
         console.log({ message });
         const isVideoTooLong = String(message).includes(
           ResponseMessageEnum.videoTooLong,
