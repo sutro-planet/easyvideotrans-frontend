@@ -13,8 +13,11 @@ import { InboxOutlined } from '@ant-design/icons';
 import { REQUEST_ENUM } from '@/app/const/request';
 import { handleDownloadVideo } from '@/app/request/playground';
 import { addLogEvent } from '@/app/utils/mitter';
-import { UploadChangeParam } from 'antd/es/upload';
+import { RcFile, UploadChangeParam } from 'antd/es/upload';
 import { useReactive, useRequest } from 'ahooks';
+import { ResponseMessageEnum } from '@/app/const/responseEnum';
+import { getVideoLengthByUploadFile } from '@/app/utils/getVideoLength';
+import { AxiosError } from 'axios';
 
 interface FormValue {
   useInput: boolean;
@@ -27,11 +30,15 @@ interface Props {
   videoId: string;
 }
 
+const MAX_VIDEO_MIN_LENGTH = 20 * 60; //20分钟
+
 const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm<FormValue>();
   const state = useReactive({
     videoDownloadOk: false,
   });
+
   const { run: handleDownloadVideoClickRun, loading } = useRequest(
     (id: string) => handleDownloadVideo(id),
     {
@@ -44,9 +51,21 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
         message.success('远程下载视频完成');
         state.videoDownloadOk = true;
       },
-      onError: () => {
-        addLogEvent('远程下载视频失败');
-        message.error('下载失败，请重试');
+      onError: (originResponseError) => {
+        const message =
+          (originResponseError as AxiosError<{ message: string }>).response
+            ?.data?.message || '';
+        console.log({ message });
+        const isVideoTooLong = String(message).includes(
+          ResponseMessageEnum.videoTooLong,
+        );
+        if (isVideoTooLong) {
+          addLogEvent('远程下载失败：视频超过20分钟限制');
+          messageApi.error('下载失败，视频超过20分钟限制');
+        } else {
+          addLogEvent('远程下载视频失败');
+          messageApi.error('下载失败，请重试');
+        }
       },
     },
   );
@@ -87,13 +106,15 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
   }, [videoId]);
 
   function onUploadFileChange(data: UploadChangeParam<UploadFile<any>>) {
-    console.log(data);
-    const status = data.file.status;
+    const file = data.file;
+    const status = file.status;
     switch (status) {
       case 'done':
         return addLogEvent('视频上传完成');
       case 'uploading':
-        return addLogEvent('视频上传中');
+        return addLogEvent(
+          `视频上传中：${parseFloat(Number(file.percent).toFixed(2))}%`,
+        );
       case 'error':
         return addLogEvent('视频上传错误');
       case 'removed':
@@ -119,107 +140,137 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
   }
 
   return (
-    <Form
-      form={form}
-      labelCol={{ span: 4 }}
-      wrapperCol={{ span: 14 }}
-      layout="horizontal"
-      onSubmitCapture={onSubmitCapture}
-    >
-      {videoId ? (
-        <Form.Item label="当前视频Id">
-          <div>{videoId}</div>
-        </Form.Item>
-      ) : (
-        <>
-          <Form.Item
-            label="手动输入视频ID"
-            valuePropName="checked"
-            name={'useInput'}
-          >
-            <Switch
-              disabled={!!videoId}
-              onChange={(checked) => {
-                addLogEvent(
-                  checked ? '选择为手动输入视频模式' : '选择为上传视频模式',
-                );
-              }}
-            />
+    <>
+      {contextHolder}
+      <Form
+        form={form}
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 14 }}
+        layout="horizontal"
+        onSubmitCapture={onSubmitCapture}
+      >
+        {videoId ? (
+          <Form.Item label="当前视频Id">
+            <div>{videoId}</div>
           </Form.Item>
-
-          {useInputId ? (
-            <>
-              <Form.Item
-                label="视频ID"
-                name={'videoId'}
-                getValueFromEvent={getVideoIdFromEvent}
-                rules={[
-                  {
-                    required: !videoId && useInputId,
-                    message: '请输入正确的视频ID或者视频网址',
-                  },
-                ]}
-              >
-                <Input disabled={!!videoId} />
-              </Form.Item>
-              <Form.Item label={'开始下载视频'}>
-                <Flex gap="small" wrap>
-                  <Button
-                    type="primary"
-                    onClick={handleDownloadVideoClick}
-                    loading={loading}
-                  >
-                    下载
-                  </Button>
-                  {state.videoDownloadOk && (
-                    <>
-                      <Button type="link" href={`/api/yt/${formInputId}`}>
-                        点此下载到本地
-                      </Button>
-                    </>
-                  )}
-                </Flex>
-              </Form.Item>
-            </>
-          ) : (
-            <Form.Item label="文件上传">
-              <Form.Item
-                name="file"
-                valuePropName="fileList"
-                getValueFromEvent={normFile}
-                noStyle
-                rules={[
-                  { required: !videoId && !useInputId, message: '请选择文件' },
-                ]}
-              >
-                <Upload.Dragger
-                  accept={'video/*'}
-                  action={REQUEST_ENUM.uploadVideo}
-                  multiple={false}
-                  onChange={onUploadFileChange}
-                >
-                  <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                  </p>
-                  <p className="ant-upload-text">点击选择文件或者拖拽文件</p>
-                  <p className="ant-upload-hint">目前仅支持单个文件</p>
-                </Upload.Dragger>
-              </Form.Item>
+        ) : (
+          <>
+            <Form.Item
+              label="手动输入视频ID"
+              valuePropName="checked"
+              name={'useInput'}
+            >
+              <Switch
+                disabled={!!videoId}
+                onChange={(checked) => {
+                  addLogEvent(
+                    checked ? '选择为手动输入视频模式' : '选择为上传视频模式',
+                  );
+                }}
+              />
             </Form.Item>
-          )}
-        </>
-      )}
 
-      <Form.Item label={'进入下一步'}>
-        <Button
-          type="primary"
-          htmlType="submit"
-          disabled={useInputId && !state.videoDownloadOk}
-        >
-          GO
-        </Button>
-      </Form.Item>
-    </Form>
+            {useInputId ? (
+              <>
+                <Form.Item
+                  label="视频ID"
+                  name={'videoId'}
+                  getValueFromEvent={getVideoIdFromEvent}
+                  rules={[
+                    {
+                      required: !videoId && useInputId,
+                      message: '请输入正确的视频ID或者视频网址',
+                    },
+                  ]}
+                >
+                  <Input disabled={!!videoId} />
+                </Form.Item>
+                <Form.Item label={'开始下载视频'}>
+                  <Flex gap="small" wrap>
+                    <Button
+                      type="primary"
+                      onClick={handleDownloadVideoClick}
+                      loading={loading}
+                    >
+                      下载
+                    </Button>
+                    {state.videoDownloadOk && (
+                      <>
+                        <Button
+                          type="link"
+                          href={` / api / yt /${formInputId}`}
+                        >
+                          点此下载到本地
+                        </Button>
+                      </>
+                    )}
+                  </Flex>
+                </Form.Item>
+              </>
+            ) : (
+              <Form.Item label="文件上传">
+                <Form.Item
+                  name="file"
+                  valuePropName="fileList"
+                  getValueFromEvent={normFile}
+                  noStyle
+                  rules={[
+                    {
+                      required: !videoId && !useInputId,
+                      message: '请选择文件',
+                    },
+                  ]}
+                >
+                  <Upload.Dragger
+                    accept={'video/*'}
+                    action={REQUEST_ENUM.uploadVideo}
+                    multiple={false}
+                    onChange={onUploadFileChange}
+                    beforeUpload={async (file: RcFile) => {
+                      try {
+                        const timeDuration =
+                          await getVideoLengthByUploadFile(file);
+                        const isVideoCanUpload =
+                          timeDuration < MAX_VIDEO_MIN_LENGTH;
+                        if (!isVideoCanUpload) {
+                          addLogEvent('远程上传失败：视频超过20分钟限制');
+                          messageApi.error('上传失败，视频超过20分钟限制');
+                        }
+                        return isVideoCanUpload || Upload.LIST_IGNORE;
+                      } catch {
+                        messageApi.error('上传视频出错');
+                        addLogEvent('上传视频出错');
+                      }
+                    }}
+                    progress={{
+                      strokeWidth: 3,
+                      format: (percent) =>
+                        percent && `${parseFloat(percent.toFixed(2))}%`,
+                    }}
+                  >
+                    <p className="ant-upload-drag-icon">
+                      <InboxOutlined />
+                    </p>
+                    <p className="ant-upload-text">点击选择文件或者拖拽文件</p>
+                    <p className="ant-upload-hint">目前仅支持单个文件</p>
+                  </Upload.Dragger>
+                </Form.Item>
+              </Form.Item>
+            )}
+          </>
+        )}
+
+        <Form.Item label={'进入下一步'}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={useInputId && !state.videoDownloadOk}
+          >
+            GO
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 };
 

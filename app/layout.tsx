@@ -44,7 +44,7 @@ export default function RootLayout({
           </div>
         </AntdRegistry>
       </body>
-      <GoogleAnalytics gaId="G-WXY965PMRE" />
+      <GoogleAnalytics gaId="G-PYDZT2E8EW" />
     </html>
   );
 }

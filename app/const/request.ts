@@ -9,4 +9,5 @@ export enum REQUEST_ENUM {
   voiceConnect = '/api/voice_connect',
   videoPreview = '/api/video_preview',
   videoPreviewStatus = '/api/video_preview_status',
+  uploadSrt = '/api/translated_zh_upload',
 }
