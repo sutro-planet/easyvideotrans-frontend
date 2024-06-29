@@ -1,38 +1,55 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## EasyVideoTrans Frontend
+### 网址
+[https://easyvideotrans.com/](https://easyvideotrans.com/)
 
-## Getting Started
+### 技术栈
+- 语言: [Typescript](https://www.typescriptlang.org/)
+- 框架: [Next.js](https://nextjs.org/)
+- 样式: [Tailwind CSS](https://tailwindcss.com/)
+- 组件库: [Ant Design](https://ant.design/index-cn)
+### 后端
+- 后端项目参考: [EasyVideoTrans](https://github.com/sutro-planet/easyvideotrans)
+- 后端地址通过Docker环境变量注入：```BACKEND_URL```
 
-First, run the development server:
-
+### 安装说明
+#### 安装环境
+**nvm**
+参考 https://github.com/nvm-sh/nvm#install--update-script
+**nodejs**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+nvm install node
+```
+**pnpm**
+参考 https://pnpm.io/installation
+#### 依赖安装
+```bash
+pnpm install
+```
+#### BACKEND_URL开发设置
+0.**此设置仅在开发阶段设置**
+
+1.根目录创建```.env.local```文件
+
+2.设置开发环境URL
+```
+BACKEND_URL=https://你的部署域名/api
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### 运行服务
+```bash
+pnpm dev
+```
+打开你的浏览器并访问 [http://localhost:3000](http://localhost:3000) 查看结果。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 了解更多
+要了解更多关于 Next.js 的信息，请参考以下资源：
+- [Next.js 文档](https://nextjs.org/docs) - 了解 Next.js 的特性和 API。
+- [学习 Next.js](https://nextjs.org/learn) - 一个交互式的 Next.js 教程。
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+你也可以查看 [Next.js GitHub 仓库](https://github.com/vercel/next.js/) - 欢迎提供反馈和贡献！
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## 在 Vercel 上部署
+部署你的 Next.js 应用的最简单方式是使用 [Vercel 平台](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)，这个平台是 Next.js 的创建者提供的。
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+我们使用的是 [Docker部署](https://nextjs.org/docs/app/building-your-application/deploying#docker-image) 方案。
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
