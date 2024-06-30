@@ -196,10 +196,7 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
                     </Button>
                     {state.videoDownloadOk && (
                       <>
-                        <Button
-                          type="link"
-                          href={` / api / yt /${formInputId}`}
-                        >
+                        <Button type="link" href={`/api/yt/${formInputId}`}>
                           点此下载到本地
                         </Button>
                       </>
