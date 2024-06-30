@@ -121,7 +121,7 @@ export default function ModalVideo({
               <path d="M10 17l6-5-6-5z" />
             </svg>
             <Link
-              href={'https://www.bilibili.com/video/BV1JZ421E71G/'}
+              href={'https://www.bilibili.com/video/BV13S411A7nf/'}
               target={'_blank'}
               className="ml-3"
             >
