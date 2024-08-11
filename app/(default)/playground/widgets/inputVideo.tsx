@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
   Button,
   Flex,
@@ -11,13 +11,17 @@ import {
 } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { REQUEST_ENUM } from '@/app/const/request';
-import { handleDownloadVideo } from '@/app/request/playground';
+import {
+  handleDownloadVideo,
+  handleDownloadVideoThumbnail,
+} from '@/app/request/playground';
 import { addLogEvent } from '@/app/utils/mitter';
 import { RcFile, UploadChangeParam } from 'antd/es/upload';
 import { useReactive, useRequest } from 'ahooks';
 import { ResponseMessageEnum } from '@/app/const/responseEnum';
 import { getVideoLengthByUploadFile } from '@/app/utils/getVideoLength';
 import { AxiosError } from 'axios';
+import axios from 'axios';
 
 interface FormValue {
   useInput: boolean;
@@ -38,6 +42,7 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
   const state = useReactive({
     videoDownloadOk: false,
   });
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
 
   const { run: handleDownloadVideoClickRun, loading } = useRequest(
     (id: string) => handleDownloadVideo(id),
@@ -104,6 +109,23 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
   useEffect(() => {
     form.setFieldValue('videoId', videoId);
   }, [videoId]);
+
+  useEffect(() => {
+    const fetchThumbnail = async (id: string) => {
+      try {
+        const url = await handleDownloadVideoThumbnail(id);
+        setThumbnailUrl(url);
+      } catch (error) {
+        console.error('Failed to fetch thumbnail:', error);
+        setThumbnailUrl(null);
+      }
+    };
+    if (formInputId) {
+      fetchThumbnail(formInputId);
+    } else {
+      setThumbnailUrl(null);
+    }
+  }, [formInputId]);
 
   function onUploadFileChange(data: UploadChangeParam<UploadFile<any>>) {
     const file = data.file;
@@ -185,6 +207,17 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
                 >
                   <Input disabled={!!videoId} />
                 </Form.Item>
+
+                {thumbnailUrl && (
+                  <Form.Item label="视频缩略图">
+                    <img
+                      src={thumbnailUrl}
+                      alt="Video Thumbnail"
+                      style={{ width: '100%' }}
+                    />
+                  </Form.Item>
+                )}
+
                 <Form.Item label={'开始下载视频'}>
                   <Flex gap="small" wrap>
                     <Button

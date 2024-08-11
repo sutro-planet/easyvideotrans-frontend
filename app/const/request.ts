@@ -1,6 +1,7 @@
 export enum REQUEST_ENUM {
   uploadVideo = '/api/video_upload',
   downloadVideo = '/api/yt_download',
+  downloadVideoThumbnail = '/api/yt_thumbnail',
   extractAudio = '/api/extra_audio',
   removeAudioBg = '/api/remove_audio_bg',
   extractSourceSrt = '/api/transcribe',
