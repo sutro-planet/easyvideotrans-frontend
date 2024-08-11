@@ -8,6 +8,23 @@ export const handleDownloadVideo = (video_id: string) => {
     { video_id },
   );
 };
+
+export const handleDownloadVideoThumbnail = async (
+  video_id: string,
+): Promise<string> => {
+  try {
+    const response = await axios.post(
+      REQUEST_ENUM.downloadVideoThumbnail,
+      { video_id },
+      { responseType: 'blob' },
+    );
+    return URL.createObjectURL(response.data);
+  } catch (error) {
+    console.error('Failed to download video thumbnail:', error);
+    throw error;
+  }
+};
+
 export const handleExtractAudio = (video_id: string) => {
   return axios.post<{ video_id: string; message: string }>(
     REQUEST_ENUM.extractAudio,
