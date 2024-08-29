@@ -34,7 +34,7 @@ interface Props {
   videoId: string;
 }
 
-const MAX_VIDEO_MIN_LENGTH = 20 * 60; //20分钟
+const MAX_VIDEO_MIN_LENGTH = 60 * 60; //60分钟
 
 const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -65,8 +65,8 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
           ResponseMessageEnum.videoTooLong,
         );
         if (isVideoTooLong) {
-          addLogEvent('远程下载失败：视频超过20分钟限制');
-          messageApi.error('下载失败，视频超过20分钟限制');
+          addLogEvent('远程下载失败：视频超过60分钟限制');
+          messageApi.error('下载失败，视频超过60分钟限制');
         } else {
           addLogEvent('远程下载视频失败');
           messageApi.error('下载失败，请重试');
@@ -263,8 +263,8 @@ const InputVideo: React.FC<Props> = ({ onFinish, videoId }) => {
                         const isVideoCanUpload =
                           timeDuration < MAX_VIDEO_MIN_LENGTH;
                         if (!isVideoCanUpload) {
-                          addLogEvent('远程上传失败：视频超过20分钟限制');
-                          messageApi.error('上传失败，视频超过20分钟限制');
+                          addLogEvent('远程上传失败：视频超过60分钟限制');
+                          messageApi.error('上传失败，视频超过60分钟限制');
                         }
                         return isVideoCanUpload || Upload.LIST_IGNORE;
                       } catch {
