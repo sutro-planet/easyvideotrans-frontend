@@ -34,7 +34,7 @@ const ConnectAudio: React.FC<Props> = ({ onFinish, videoId }) => {
     });
 
   useEffect(() => {
-    form.setFieldValue('videoId', videoId);
+    form.setFieldValue('video_id', videoId);
   }, [videoId]);
 
   return (

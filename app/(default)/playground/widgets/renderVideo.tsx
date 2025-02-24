@@ -99,7 +99,7 @@ const RenderVideo: React.FC<Props> = ({ videoId }) => {
   );
 
   useEffect(() => {
-    form.setFieldValue('videoId', videoId);
+    form.setFieldValue('video_id', videoId);
   }, [videoId]);
 
   return (

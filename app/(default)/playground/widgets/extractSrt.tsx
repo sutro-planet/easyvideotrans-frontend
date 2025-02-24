@@ -14,6 +14,7 @@ interface Props {
 }
 
 interface FormValue {
+  video_id: string;
   source_lang: string;
   translate_vendor: string;
   translate_key: string;
@@ -80,7 +81,7 @@ const ExtractSrt: React.FC<Props> = ({ onFinish, videoId }) => {
   };
 
   useEffect(() => {
-    form.setFieldValue('videoId', videoId);
+    form.setFieldValue('video_id', videoId);
   }, [videoId]);
   // 自定义上传操作
   const customRequest = async ({

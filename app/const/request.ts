@@ -1,4 +1,8 @@
 export enum REQUEST_ENUM {
+  downloadOriginalSrt = '/api/srt_en_merged',
+  uploadOriginalSrt = '/api/original_en_upload',
+  downloadTranslatedSrt = '/api/srt_zh_merged',
+  uploadTranslatedSrt = '/api/translated_zh_upload',
   uploadVideo = '/api/video_upload',
   downloadVideo = '/api/yt_download',
   downloadVideoThumbnail = '/api/yt_thumbnail',
@@ -7,6 +11,7 @@ export enum REQUEST_ENUM {
   extractSourceSrt = '/api/transcribe',
   translateSrt = '/api/translate_to_zh',
   generateTTS = '/api/tts',
+  generateFishTTS = '/api/fish-tts',
   voiceConnect = '/api/voice_connect',
   videoPreview = '/api/video_preview',
   videoPreviewStatus = '/api/video_preview_status',

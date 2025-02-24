@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import { Button, Form, Input, message, Select } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Form, Input, message, Select, Alert } from 'antd';
 import { useReactive, useRequest } from 'ahooks';
-import { generateTTS } from '@/app/request/playground';
+import { generateFishTTS, generateTTS } from '@/app/request/playground';
 import { IGenerateTTSProp } from '@/app/type';
 import { addLogEvent } from '@/app/utils/mitter';
 import { TRANSLATE_OPTIONS } from '@/app/const/translate_option';
+import { da } from 'date-fns/locale';
 
 interface Props {
   onFinish: () => void;
@@ -13,13 +14,19 @@ interface Props {
 
 const ChineseAudio: React.FC<Props> = ({ onFinish, videoId }) => {
   const [form] = Form.useForm<IGenerateTTSProp>();
+  const [selectedVendor, setSelectedVendor] = useState<string>('edge'); // Track selected TTS vendor
 
   const state = useReactive({
     translateSrtOk: false,
   });
 
   const { run: generateTTSRun, loading: generateTTSLoading } = useRequest(
-    (data: IGenerateTTSProp) => generateTTS(data),
+    (data: IGenerateTTSProp) => {
+      if (data.tts_vendor === 'fish') {
+        return generateFishTTS(data);
+      }
+      return generateTTS(data);
+    },
     {
       manual: true,
       onBefore: () => {
@@ -42,14 +49,14 @@ const ChineseAudio: React.FC<Props> = ({ onFinish, videoId }) => {
     const data: IGenerateTTSProp = {
       video_id: videoId,
       tts_vendor,
-      tts_key,
-      tts_character,
+      tts_key: selectedVendor === 'fish' ? '' : tts_key, // Remove key for Fish TTS
+      tts_character: selectedVendor === 'fish' ? '' : tts_character, // Remove character for Fish TTS
     };
     generateTTSRun(data);
   };
 
   useEffect(() => {
-    form.setFieldValue('videoId', videoId);
+    form.setFieldValue('video_id', videoId);
   }, [videoId]);
 
   return (
@@ -66,9 +73,11 @@ const ChineseAudio: React.FC<Props> = ({ onFinish, videoId }) => {
       }}
       onSubmitCapture={onFinish}
     >
-      <Form.Item label="视频ID" name={'videoId'}>
+      <Form.Item label="视频ID" name={'video_id'}>
         <Input disabled value={videoId} />
       </Form.Item>
+
+      {/* TTS Vendor Selection */}
       <Form.Item label={'TTS vendor'}>
         <Form.Item
           name="tts_vendor"
@@ -76,18 +85,44 @@ const ChineseAudio: React.FC<Props> = ({ onFinish, videoId }) => {
         >
           <Select
             placeholder="选择TTS vendor"
-            options={[{ value: 'edge', label: 'edge' }]}
+            options={[
+              { value: 'edge', label: 'Edge TTS' },
+              { value: 'fish', label: 'Fish TTS' },
+            ]}
+            onChange={(value) => setSelectedVendor(value)} // Track selected vendor
           />
         </Form.Item>
       </Form.Item>
-      <Form.Item label={'TTS Character'}>
-        <Form.Item name="tts_character">
-          <Select placeholder="选择TTS Character" options={TRANSLATE_OPTIONS} />
-        </Form.Item>
-      </Form.Item>
-      <Form.Item label="key" name={'tts_key'}>
-        <Input />
-      </Form.Item>
+
+      {/* Warning Box for Fish TTS */}
+      {selectedVendor === 'fish' && (
+        <Alert
+          message="Experimental Feature"
+          description="Fish TTS is an experimental feature and may not be stable."
+          type="warning"
+          showIcon
+          style={{ marginBottom: '16px' }}
+        />
+      )}
+
+      {/* Hide TTS Character and Key when Fish TTS is selected */}
+      {selectedVendor !== 'fish' && (
+        <>
+          <Form.Item label={'TTS Character'}>
+            <Form.Item name="tts_character">
+              <Select
+                placeholder="选择TTS Character"
+                options={TRANSLATE_OPTIONS}
+              />
+            </Form.Item>
+          </Form.Item>
+          <Form.Item label="key" name={'tts_key'}>
+            <Input />
+          </Form.Item>
+        </>
+      )}
+
+      {/* Generate TTS Button */}
       <Form.Item label={'生成TTS'}>
         <Button
           type="primary"
@@ -102,6 +137,8 @@ const ChineseAudio: React.FC<Props> = ({ onFinish, videoId }) => {
           </Button>
         )}
       </Form.Item>
+
+      {/* Proceed Button */}
       <Form.Item label={'进入下一步'}>
         <Button
           type="primary"

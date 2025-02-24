@@ -14,6 +14,7 @@ import React, { useEffect } from 'react';
 import ChineseAudio from '@/app/(default)/playground/widgets/chineseAudio';
 import ConnectAudio from '@/app/(default)/playground/widgets/connectAudio';
 import dynamic from 'next/dynamic';
+import SubtitleEditor from '@/app/(default)/playground/widgets/subtitleEditor';
 
 const RenderVideo = dynamic(
   () => import('@/app/(default)/playground/widgets/renderVideo'),
@@ -65,16 +66,24 @@ const PageContent = () => {
     },
     {
       key: '3',
-      label: '中文字幕配音',
-      children: <ChineseAudio onFinish={onNextStep} videoId={state.videoId} />,
+      label: '提取字幕校对',
+      children: (
+        <SubtitleEditor onFinish={onNextStep} videoId={state.videoId} />
+      ),
     },
     {
       key: '4',
+      label: '中文字幕配音',
+      children: <ChineseAudio onFinish={onNextStep} videoId={state.videoId} />,
+    },
+
+    {
+      key: '5',
       label: '语音连接',
       children: <ConnectAudio onFinish={onNextStep} videoId={state.videoId} />,
     },
     {
-      key: '5',
+      key: '6',
       label: '渲染预览视频',
       children: <RenderVideo videoId={state.videoId} />,
     },
