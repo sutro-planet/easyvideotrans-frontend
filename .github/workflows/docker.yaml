@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: sutro-k8s-runner-set
 
     steps:
       - name: Check out code
@@ -29,3 +29,4 @@ jobs:
           context: .
           push: true
           tags: hanfa/pytvzhen-frontend:${{ github.event_name == 'push' && 'latest' || github.event.pull_request.number }}
+          platforms: linux/amd64,linux/arm64
